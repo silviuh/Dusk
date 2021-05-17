@@ -1,0 +1,11 @@
+{
+  "name": "dusk",
+  "version": "1.0.0",
+  "description": "Dusk is an online, real-time chat app, which brought togheter thousands of users worldwide.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
