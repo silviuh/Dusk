@@ -64,7 +64,7 @@ function outputMessage(message) {
   para.classList.add('text');
   para.innerText = message.text;
   div.appendChild(para);
-  
+
   document.querySelector('.chat-messages').appendChild(div);
 }
 
@@ -87,7 +87,7 @@ function outputUsers(users) {
 document.getElementById('leave-btn').addEventListener('click', () => {
   const leaveRoom = confirm('Are you sure you want to leave the chatroom?');
   if (leaveRoom) {
-    window.location = '../index.html';
+    window.location = '../login.html';
   } else {
   }
 });
