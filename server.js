@@ -6,6 +6,9 @@ const formatMessage = require("./utils/messages");
 const bcrypt = require('bcrypt');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const session = require('express-session');
+const jwt = require('jsonwebtoken');
+const expressLayouts = require('express-ejs-layouts');
 
 const {
   userJoin,
@@ -14,6 +17,7 @@ const {
   getRoomUsers,
 } = require("./utils/users");
 const User = require("./utils/user"); // our user model defined by the user schema
+const e = require("express");
 
 mongoose.connect('mongodb://localhost:27017/dusk', {
   useNewUrlParser: true,
@@ -25,28 +29,61 @@ const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
 
+app.use(session({
+  secret: 'secret-key',
+  resave: false,
+  saveUninitialized: false
+}));
+
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+app.use(expressLayouts);
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static('public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(express.static(path.join(__dirname, "public")));
 
 const botName = "Dusk Bot";
 const users = [];
 
-app.get("/users/login", async (req, res) => {
-  console.log("am ajuns si aici");
+app.get('/dashboard', (req, res) => { // dashboard endpoint
+  console.log("dashboard working");
+  res.render('dashboard.ejs', { userName: req.session.userName });
 });
 
-app.post("/users/login", async (req, res) => {
-  console.log(req.body);
-  res.redirect("http://localhost:3000/chat.html");
+app.get('/login', (req, res) => {
+  console.log("gets here sdssdsdsds");
+  res.render('login.ejs', { loginError: req.session.errorMessage }); // renders login.ejs
 });
 
-app.get("/users/register", async (req, res) => {
-  // res.json(users);
+app.post("/check-valid-login", async (req, res) => {
+  const { username, password } = req.body;
+  const user = await User.findOne({ username }).lean();
+
+  if (!user) {
+    req.session.errorMessage = "Incorrect username or password.";
+    res.redirect("/login");
+  }
+
+  if (await bcrypt.compare(password, user.hashedPassword)) {
+    req.session.userName = username;
+    req.session.password = password;
+    req.session.firstname = user.firstname;
+    req.session.lastname = user.lastname;
+    res.redirect("/dashboard");
+    // return res.json({ status: 'ok', data: "okkk" })
+  } else {
+    req.session.errorMessage = "Incorrect username or password.";
+    res.redirect("/login");
+  }
 });
 
-app.post("/users/register", async (req, res) => {
+app.get("/register", async (req, res) => {
+  res.render('registration.ejs'); // renders registration.ejs
+});
+
+app.post("/register", async (req, res) => {
   const {
     firstname,
     lastname,
