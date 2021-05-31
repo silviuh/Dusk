@@ -48,13 +48,16 @@ const botName = "Dusk Bot";
 const users = [];
 
 app.get('/dashboard', (req, res) => { // dashboard endpoint
-  console.log("dashboard working");
   res.render('dashboard.ejs', { userName: req.session.userName });
 });
 
+app.get('/profile', (req, res) => { // dashboard endpoint
+  res.render('profile.ejs', { userName: req.session.userName });
+});
+
+
 app.get('/login', (req, res) => {
-  console.log("gets here sdssdsdsds");
-  res.render('login.ejs', { loginError: req.session.errorMessage }); // renders login.ejs
+  res.render('login.ejs', { errorMessage: req.session.errorMessage }); // renders login.ejs
 });
 
 app.post("/check-valid-login", async (req, res) => {
@@ -65,8 +68,7 @@ app.post("/check-valid-login", async (req, res) => {
     req.session.errorMessage = "Incorrect username or password.";
     res.redirect("/login");
   }
-
-  if (await bcrypt.compare(password, user.hashedPassword)) {
+  else if (await bcrypt.compare(password, user.hashedPassword)) {
     req.session.userName = username;
     req.session.password = password;
     req.session.firstname = user.firstname;
@@ -80,7 +82,7 @@ app.post("/check-valid-login", async (req, res) => {
 });
 
 app.get("/register", async (req, res) => {
-  res.render('registration.ejs'); // renders registration.ejs
+  res.render('registration.ejs', { errorMessage: req.session.errorMessage }); // renders login.ejs
 });
 
 app.post("/register", async (req, res) => {
@@ -92,32 +94,32 @@ app.post("/register", async (req, res) => {
   } = req.body;
 
   if (!password || typeof password !== 'string') {
-    return res.json({ status: 'error', error: 'Invalid password' })
+    req.session.errorMessage = 'Invalid password';
+    res.redirect("/register");
   }
 
-  if (password.length < 4) {
-    return res.json({
-      status: 'error',
-      error: 'Password too small. Should be atleast 6 characters'
-    })
+  else if (password.length < 4) {
+    req.session.errorMessage = 'Password too small. Should be atleast 6 characters'
+    res.redirect("/register");
   }
-  // console.log(`firstname: ${firstname} lastname: ${lastname} name: ${username} passwd: ${password}`);
-  const hashedPassword = await bcrypt.hash(password, 10);
+  else {
+    // console.log(`firstname: ${firstname} lastname: ${lastname} name: ${username} passwd: ${password}`);
+    const hashedPassword = await bcrypt.hash(password, 10);
+    try {
+      await User.create({
+        firstname,
+        lastname,
+        username,
+        hashedPassword
+      })
+      console.log('user created succesfully');
+    } catch (error) {
+      console.log(error);
+      return res.json({ status: 'error' });
+    }
 
-  try {
-    await User.create({
-      firstname,
-      lastname,
-      username,
-      hashedPassword
-    })
-    console.log('user created succesfully');
-  } catch (error) {
-    console.log(error);
-    return res.json({ status: 'error' });
+    res.redirect("/login");
   }
-
-  return res.json({ status: 'ok' });
 });
 
 // Run when client connects

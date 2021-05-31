@@ -18,24 +18,31 @@
         <br>
         <hr>
         <br>
-        <form class="register-form" id="reg-form">
-            <input requiered type="text" autocomplete="off" id="firstname" placeholder="Firstname" required />
+        <form class="register-form" id="reg-form" action="/register" method="POST">
+            <input requiered type="text" autocomplete="off" id="firstname" placeholder="Firstname" name="firstname"
+                required />
             <br>
-            <input type="text" autocomplete="off" id="lastname" placeholder="Lastname" required />
+            <input type="text" autocomplete="off" id="lastname" placeholder="Lastname" name="lastname" required />
             <br>
-            <input type="text" autocomplete="off" id="username" placeholder="Username" required />
+            <input type="text" autocomplete="off" id="username" placeholder="Username" name="username" required />
             <br>
-            <input type="password" autocomplete="off" id="password" placeholder="Password" required />
+            <input type="password" autocomplete="off" id="password" placeholder="Password" name="password" required />
             <br>
             <button class="btn" type="submit" value="Register">Register &nbsp; <i class="fas fa-file-signature"></i>
-
             </button>
         </form>
 
         <br>
         <h5>By registering you agree to Dusk's Terms of Service and Privacy Policy.</h6>
+
+        <% if(typeof errorMessage !='undefined' ){ %>
+            <p style="color: red;">
+                Invalid username or password.
+            </p>
+            <% } %>
     </div>
 
+    <!--
     <script>
         const form = document.getElementById('reg-form');
         form.addEventListener('submit', registerUser);
@@ -68,6 +75,7 @@
             }
         }
     </script>
+    -->
 </body>
 
 </html>

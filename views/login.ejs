@@ -21,15 +21,19 @@
         </header>
         <hr>
         <br>
-        <form class="login-form" id="login-form">
-            <input type="text" autocomplete="off" id="username" placeholder="Username" required />
+        <form class="login-form" action="/check-valid-login" method="POST" id="login-form">
+            <input type="text" autocomplete="off" id="username" placeholder="Username" name="username" required />
             <br>
-            <input type="password" autocomplete="off" id="password" placeholder="Password" required />
+            <input type="password" autocomplete="off" id="password" placeholder="Password" name="password" required />
             <br>
             <button class="btn" type="submit" value="Login">Log In &nbsp;<i class="fas fa-sign-in-alt"></i>
             </button>
         </form>
         <br>
+
+        <a href="/register">Create a new account</a>
+        <br>
+
         <% if(typeof errorMessage !='undefined' ){ %>
             <p style="color: red;">
                 Invalid username or password.
@@ -38,6 +42,7 @@
 
     </div>
 
+    <!--
     <script>
         const form = document.getElementById('login-form');
         form.addEventListener('submit', loginUser);
@@ -76,6 +81,8 @@
             */
         }
     </script>
+    -->
+
 </body>
 
 </html>
