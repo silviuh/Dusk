@@ -314,6 +314,12 @@ a {
     font-size: 17px;
 }
 
+.chat-container .btn:hover {
+    background-color: #373738;
+    /* Green */
+    color: white;
+}
+
 .join-main .btn:hover {
     background-color: #373738;
     /* Green */

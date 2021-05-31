@@ -52,13 +52,27 @@ app.get('/dashboard', (req, res) => { // dashboard endpoint
 });
 
 app.get('/profile', (req, res) => { // dashboard endpoint
-  res.render('profile.ejs', { userName: req.session.userName });
+  res.render('profile.ejs', {
+    userName: req.session.userName,
+    lastName: req.session.lastname,
+    firstName: req.session.firstname,
+  });
 });
-
 
 app.get('/login', (req, res) => {
   res.render('login.ejs', { errorMessage: req.session.errorMessage }); // renders login.ejs
 });
+
+app.get('/logout', (req, res) => {
+  console.log(`user [${req.session.userName}] logged out...`);
+  req.session.destroy();
+  res.redirect("/login");
+});
+
+app.get('/room-join', (req, res) => {
+  res.render('room-join.ejs'); // renders login.ejs
+});
+
 
 app.post("/check-valid-login", async (req, res) => {
   const { username, password } = req.body;
@@ -125,8 +139,8 @@ app.post("/register", async (req, res) => {
 // Run when client connects
 io.on("connection", (socket) => {
   socket.on("joinRoom", ({ username, room }) => {
+    // const user = userJoin(socket.id, res.sessiom.username, room);
     const user = userJoin(socket.id, username, room);
-
     socket.join(user.room);
 
     // Welcome current user
