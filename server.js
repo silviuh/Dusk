@@ -73,39 +73,68 @@ app.post('/update-profile', async (req, res) => { // dashboard endpoint
     lastname,
     password
   } = req.body;
+  let hashedPassword;
+  let querryIsSuccessful = true;
 
-  if (!password || typeof password !== 'string') {
-    return res.json({ status: 'error', error: 'Invalid password' })
+  if (password !== 'undefined') {
+    if (typeof password !== 'string') {
+      return res.json({ status: 'error', error: 'Invalid password' })
+    }
+
+    if (password.length < 4) {
+      return res.send({
+        status: 'error',
+        error: 'Password too small. Should be atleast 6 characters'
+      })
+    }
+
+    // console.log(`firstname: ${firstname} lastname: ${lastname} name: ${username} passwd: ${password}`);
   }
 
-  else if (password.length < 4) {
-    return res.json({
-      status: 'error',
-      error: 'Password too small. Should be atleast 6 characters'
-    })
+  if (password !== 'undefined') {
+    hashedPassword = await bcrypt.hash(password, 10);
+  }
+
+  try {
+    var updateQuerry = { firstname: req.session.firstname, lastname: req.session.lastname };
+    const user = await User.findOne({ username: req.session.userName }).lean();
+    const userID = user._id.toString();
+
+    if (hashedPassword != null) {
+      var newValues = { $set: { firstname: firstname, lastname: lastname, username: user.username.toString(), hashedPassword: hashedPassword } };
+    } else {
+      var newValues = {
+        $set: { firstname: firstname, lastname: lastname, username: user.username.toString(), hashedPassword: user.hashedPassword.toString() }
+      };
+    }
+
+    await User.updateOne(
+      { _id: userID },
+      newValues
+    );
+
+    console.log('user updated succesfully');
+
+    if (firstname != 'undefined') {
+      req.session.firstname = firstname;
+    }
+    if (lastname != 'undefined') {
+      req.session.lastname = lastname;
+    }
+    if (password != 'undefined') {
+      req.session.password = password;
+    }
+
+  } catch (error) {
+    querryIsSuccessful = false;
+    console.log(error)
+  }
+
+  if (querryIsSuccessful === true) {
+    res.send({ status: 'ok' });
   }
   else {
-    // console.log(`firstname: ${firstname} lastname: ${lastname} name: ${username} passwd: ${password}`);
-    const hashedPassword = await bcrypt.hash(password, 10);
-    try {
-      var updateQuerry = { firstname: firstname, lastname: lastname };
-      var newValues = { $set: { firstname: firstname, lastname: lastname, hashedPassword: hashedPassword } };
-
-      await User.updateOne({
-        updateQuerry,
-        newValues
-      });
-
-      console.log('user updated succesfully');
-      req.session.firstName = firstname;
-      req.session.lastname = lastname;
-      req.session.password = password;
-      
-      res.json({ status: 'ok' })
-    } catch (error) {
-      console.log(error)
-      res.json({ status: 'error', error: 'Db engine failed to update the user.' })
-    }
+    res.send({ status: 'error', error: 'Db engine failed to update the user.' })
   }
 });
 
@@ -157,6 +186,8 @@ app.get("/register", async (req, res) => {
 });
 
 app.post("/register", async (req, res) => {
+  let takenUserName = false;
+
   const {
     firstname,
     lastname,
@@ -185,11 +216,14 @@ app.post("/register", async (req, res) => {
       })
       console.log('user created succesfully');
     } catch (error) {
-      console.log(error);
-      return res.json({ status: 'error' });
+      req.session.errorMessage = 'Username is already taken. Spice it up'
+      takenUserName = true;
     }
 
-    res.redirect("/login");
+    if (takenUserName === false)
+      res.redirect("/login");
+    else
+      res.redirect("/register");
   }
 });
 

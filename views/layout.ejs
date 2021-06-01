@@ -33,32 +33,17 @@
             form.addEventListener('submit', sendData);
 
             async function sendData(data) {
-                event.preventDefault()
-                console.log("am aj aiic 2");
-
                 const xhttp = new XMLHttpRequest();
                 xhttp.open("POST", "/update-profile", true);
                 xhttp.setRequestHeader("Content-type", "application/json");
 
                 xhttp.onreadystatechange = function () {
                     if (this.readyState == 4 && this.status == 200) {
-                        var response = this.responseText;
-                        if (this.status === 'ok') {
-                            // everythign went fine
-                            alert('Success')
-                        } else {
-                            alert(response.error)
-                        }
-                        /*
-                        if (response === "ok") {
-                            alert("User information updated");
-                        }
-                        else if (response === "error") {
-                            alert("there was an error in sending the data to the server.");
-                        }
-                        */
+                        alert('User updated.')
+                    } else {
+                        alert('Error')
                     }
-                };
+                }
 
                 var data = {
                     firstname: document.getElementById('firstname').value,
@@ -68,7 +53,7 @@
 
                 xhttp.send(JSON.stringify(data));
             }
-        }
+        };
     </script>
 </body>
 
