@@ -87,8 +87,6 @@ app.post('/update-profile', async (req, res) => { // dashboard endpoint
         error: 'Password too small. Should be atleast 6 characters'
       })
     }
-
-    // console.log(`firstname: ${firstname} lastname: ${lastname} name: ${username} passwd: ${password}`);
   }
 
   if (password !== 'undefined') {
@@ -139,11 +137,9 @@ app.post('/update-profile', async (req, res) => { // dashboard endpoint
 });
 
 
-
 app.get('/about', (req, res) => { // dashboard endpoint
   res.render('about.ejs');
 });
-
 
 app.get('/login', (req, res) => {
   res.render('login.ejs', { errorMessage: req.session.errorMessage }); // renders login.ejs
@@ -159,7 +155,6 @@ app.get('/room-join', (req, res) => {
   res.render('room-join.ejs'); // renders login.ejs
 });
 
-
 app.post("/check-valid-login", async (req, res) => {
   const { username, password } = req.body;
   const user = await User.findOne({ username }).lean();
@@ -174,7 +169,6 @@ app.post("/check-valid-login", async (req, res) => {
     req.session.firstname = user.firstname;
     req.session.lastname = user.lastname;
     res.redirect("/dashboard");
-    // return res.json({ status: 'ok', data: "okkk" })
   } else {
     req.session.errorMessage = "Incorrect username or password.";
     res.redirect("/login");
@@ -229,7 +223,6 @@ app.post("/register", async (req, res) => {
 
 // Run when client connects
 io.on("connection", (socket) => {
-  console.log(socket.handshake.sessionID);
   socket.on("joinRoom", ({ username, room }) => {
     // const user = userJoin(socket.id, res.sessiom.username, room);
     const user = userJoin(socket.id, username, room);
