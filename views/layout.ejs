@@ -55,6 +55,18 @@
             }
         };
     </script>
+    <script type="text/javascript">
+        const joinForm = document.getElementById('room-join-form');
+        if (joinForm !== null) {
+            joinForm.addEventListener('submit', emitUserCredentials);
+
+            function emitUserCredentials(data) {
+                username = document.getElementById('username').value;
+                room = document.getElementById('room').value;
+                socket.emit('joinRoom', { username, room });
+            }
+        };
+    </script>
 </body>
 
 </html>
