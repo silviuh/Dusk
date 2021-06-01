@@ -59,6 +59,63 @@ app.get('/profile', (req, res) => { // dashboard endpoint
   });
 });
 
+app.get('/settings', (req, res) => { // dashboard endpoint
+  res.render('settings.ejs', {
+    userName: req.session.userName,
+    lastName: req.session.lastname,
+    firstName: req.session.firstname,
+  });
+});
+
+app.post('/update-profile', async (req, res) => { // dashboard endpoint
+  const {
+    firstname,
+    lastname,
+    password
+  } = req.body;
+
+  if (!password || typeof password !== 'string') {
+    return res.json({ status: 'error', error: 'Invalid password' })
+  }
+
+  else if (password.length < 4) {
+    return res.json({
+      status: 'error',
+      error: 'Password too small. Should be atleast 6 characters'
+    })
+  }
+  else {
+    // console.log(`firstname: ${firstname} lastname: ${lastname} name: ${username} passwd: ${password}`);
+    const hashedPassword = await bcrypt.hash(password, 10);
+    try {
+      var updateQuerry = { firstname: firstname, lastname: lastname };
+      var newValues = { $set: { firstname: firstname, lastname: lastname, hashedPassword: hashedPassword } };
+
+      await User.updateOne({
+        updateQuerry,
+        newValues
+      });
+
+      console.log('user updated succesfully');
+      req.session.firstName = firstname;
+      req.session.lastname = lastname;
+      req.session.password = password;
+      
+      res.json({ status: 'ok' })
+    } catch (error) {
+      console.log(error)
+      res.json({ status: 'error', error: 'Db engine failed to update the user.' })
+    }
+  }
+});
+
+
+
+app.get('/about', (req, res) => { // dashboard endpoint
+  res.render('about.ejs');
+});
+
+
 app.get('/login', (req, res) => {
   res.render('login.ejs', { errorMessage: req.session.errorMessage }); // renders login.ejs
 });
@@ -138,6 +195,7 @@ app.post("/register", async (req, res) => {
 
 // Run when client connects
 io.on("connection", (socket) => {
+  console.log(socket.handshake.sessionID);
   socket.on("joinRoom", ({ username, room }) => {
     // const user = userJoin(socket.id, res.sessiom.username, room);
     const user = userJoin(socket.id, username, room);

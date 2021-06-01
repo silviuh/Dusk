@@ -1,6 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<head>
+    <style>
+        input[type='text'],
+        input[type='password'] {
+            border-radius: 25px;
+            font-size: 16px;
+            padding: 5px;
+            height: 40px;
+            flex: 1;
+            font-family: 'Roboto Mono', monospace;
+        }
+    </style>
+</head>
+
 <body>
 
     <div class="wrapper">
@@ -20,7 +34,7 @@
         </div>
         <div class="right">
             <div class="info">
-                <h3>Information</h3>
+                <h3>Personal account data</h3>
                 <div class="info_data">
                     <div class="data">
                         <h4>Firstname</h4>
@@ -42,19 +56,20 @@
             </div>
 
             <div class="projects">
-                <h3>Friends</h3>
-                <div class="projects_data">
-                    <div class="btn">
-                        <button>See friends</button>
-                    </div>
-                    <div class="btn">
-                        <button>Add friends</button>
-                    </div>
-                </div>
+                <form class="update-form" id="update-form">
+                    <input type="text" autocomplete="off" id="firstname" placeholder="Firstname" />
+                    <br>
+                    <input type="text" autocomplete="off" id="lastname" placeholder="Lastname" />
+                    <br>
+                    <input type="password" autocomplete="off" id="password" placeholder="Password" />
+                    <br>
+                    <br>
+                    <button class="btn" type="submit" value="Update">Update &nbsp; <i
+                            class="fas fa-user-edit"></i></button>
+                </form>
             </div>
         </div>
     </div>
-
 </body>
 
 </html>

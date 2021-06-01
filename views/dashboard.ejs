@@ -223,7 +223,13 @@
             <strong> &#9776;</strong>
         </div>
         <header class="header">
-            <div class="header_search"><h3><i class="fa fa-user-astronaut"></i> Dusk</h3></div>
+            <div class="header_search">
+                <h3><i class="fa fa-user-astronaut"></i>
+                    <% if(typeof userName !='undefined' ){ %>
+                        <%= userName %>
+                            <% } %>
+                </h3>
+            </div>
             <div class="header_avatar"><a href="/logout">Logout</a></div>
         </header>
         <aside class="aside">
@@ -231,10 +237,18 @@
                 <strong>&times;</strong>
             </div>
             <ul class="aside_list">
-                <a href="/profile"><li class="aside_list-item">User Profile</li></a>
-                <a href="/room-join"><li class="aside_list-item">Chat rooms</li></a>
-                <a href="/register"><li class="aside_list-item">Settings</li></a>
-                <a href="/register"><li class="aside_list-item">About</li></a>
+                <a href="/profile">
+                    <li class="aside_list-item">User Profile</li>
+                </a>
+                <a href="/room-join">
+                    <li class="aside_list-item">Chat rooms</li>
+                </a>
+                <a href="/settings">
+                    <li class="aside_list-item">Settings</li>
+                </a>
+                <a href="/about">
+                    <li class="aside_list-item">About</li>
+                </a>
             </ul>
         </aside>
         <main class="main">
@@ -255,14 +269,14 @@
                 </div>
                 <div class="overview_card">
                     <div class="overview_card-info">Settings</div>
-                    <div class="overview_card-icon"><a href="/register">
+                    <div class="overview_card-icon"><a href="/settings">
                             <h1><i class="fas fa-user-cog"></i></h1>
                         </a>
                     </div>
                 </div>
                 <div class="overview_card">
                     <div class="overview_card-info">About</div>
-                    <div class="overview_card-icon"><a href="/register">
+                    <div class="overview_card-icon"><a href="/about">
                             <h1><i class="fas fa-address-card"></i></h1>
                         </a>
                     </div>
